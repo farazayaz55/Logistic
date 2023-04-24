@@ -14,6 +14,7 @@ import {
   import logo from '../assets/Images/logoheader.png'
 import { NextRouter, useRouter } from "next/router";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
   const Navbar = () => {
     const router:NextRouter=useRouter()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -24,6 +25,13 @@ import Image from "next/image";
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+
+
+    const handleLogout=async()=>{
+      await signOut({ callbackUrl: 'http://localhost:3000/' })
+    }
+
      const handleSetting=()=>{
     router.push("/setting")
       setAnchorEl(null);
@@ -92,7 +100,7 @@ import Image from "next/image";
               <MenuItem onClick={handleClose}>Profile</MenuItem>
              
               <MenuItem onClick={handleSetting}>Settings</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </Grid>
         </Grid>

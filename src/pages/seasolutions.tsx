@@ -26,13 +26,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
-import Navbar from "../Components/NavBar";
+import Navbar from "../Components/Navbar";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { TbArrowNarrowDown, TbArrowNarrowUp } from "react-icons/tb";
 import Image from "next/image";
+import ProtectedRoute from '../client_utils/protectRoute'
 
 
 interface Duration{
@@ -85,6 +86,23 @@ function createData(
 
 const rows = [
   createData(
+    <Image
+  src="https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+  alt="profile picture"
+  width={20}
+  height={20}
+  style={{ borderRadius: "50%", marginRight: "20px" }}
+></Image>,
+
+    "PORTBURY",
+    "HONG KONG",
+    "Dubai , India, Pakistan",
+    "30 DAYS",
+    "APRIL 20 2023",
+    "LION SERVICE",
+    "TRANSHIPMENT",
+  ),
+  createData(
     <img
       src={
         "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
@@ -101,7 +119,24 @@ const rows = [
     "APRIL 20 2023",
     "LION SERVICE",
     "TRANSHIPMENT",
-    "Unknown"
+  ),
+  createData(
+    <img
+      src={
+        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+      }
+      height="20px"
+      width="20px"
+      style={{ borderRadius: "50%", marginRight: "20px" }}
+    ></img>,
+
+    "PORTBURY",
+    "HONG KONG",
+    "Dubai , India, Pakistan",
+    "30 DAYS",
+    "APRIL 20 2023",
+    "LION SERVICE",
+    "TRANSHIPMENT",
   ),
   createData(
     <img
@@ -158,45 +193,6 @@ const rows = [
     "APRIL 20 2023",
     "LION SERVICE",
     "TRANSHIPMENT",
-    "Unknown"
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-    "Unknown"
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-    "Unknown"
   ),
 ];
 const SeaSolutions:React.FC = () => {
@@ -524,4 +520,4 @@ const SeaSolutions:React.FC = () => {
   );
 };
 
-export default SeaSolutions;
+export default ProtectedRoute(SeaSolutions);

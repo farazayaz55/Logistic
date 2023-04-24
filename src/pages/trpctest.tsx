@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import { trpc } from '../utils/trpc';
+import { api } from '../utils/trpc';
 export default function IndexPage() {
-  const hello = trpc.hello.useQuery({ text: 'client' });
-  const bye=trpc.bye.useMutation()
+
+
+  const hello = api.firstRouter.hello.useQuery({ text: 'client' });
+  const bye=api.firstRouter.bye.useMutation()
 
   useEffect(()=>
   bye.mutate({text:"Faraz"})

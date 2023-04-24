@@ -1,31 +1,10 @@
 import { z } from 'zod';
-import { procedure, router } from '../trpc';
+import { firstRouter } from './first_router';
+import { second_router } from './second_router';
+import { createTRPCRouter } from '../trpc';
 
-export const appRouter = router({
-  hello: procedure
-    .input(
-      z.object({
-        text: z.string(),
-      }),
-    )
-    .query(({ input }) => {
-      return {
-        greeting: `hello ${input.text}`,
-      };
-    }),
-
-    bye:  procedure
-    .input(
-      z.object({
-        text: z.string(),
-      }),
-    )
-    .mutation(({ input }) => {
-      return {
-        greeting: `hello ${input.text}`,
-      };
-    }),
-});
+export const appRouter = createTRPCRouter({firstRouter,second_router})
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+

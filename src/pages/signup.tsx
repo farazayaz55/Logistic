@@ -14,13 +14,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import bg from "../assets/Images/bg.png";
-import {User} from '../interfaces/User'
+import { User } from "../interfaces/User";
 import { useRouter } from "next/router";
+import { api } from "@/utils/trpc";
+import { ErrorHandler } from "@/client_utils/ErrorHandler";
 
 const theme = createTheme();
 //  export default function
-const SignUpSide:React.FC = () => {
-    const router=useRouter()
+const SignUpSide: React.FC = () => {
+  const router = useRouter();
+  const signup = api.firstRouter.Signup.useMutation();
   const [msg, setMsg] = useState<string>("");
   const [err, setErr] = useState<boolean>(false);
   const [user, setUser] = useState<User>({
@@ -28,9 +31,8 @@ const SignUpSide:React.FC = () => {
     email: "",
     password: "",
     cpassword: "",
-   
   });
-  const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUser({
       ...user,
@@ -38,28 +40,31 @@ const SignUpSide:React.FC = () => {
     });
   };
   const handleSignIn = () => {
-    router.push('/signin')
+    router.push("/signin");
   };
-  const handleSubmit = async (event:FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { name, email, password, cpassword} = user;
-    
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !cpassword
-      
-    ) {
+    const { name, email, password, cpassword } = user;
+
+    if (!name || !email || !password || !cpassword) {
       setMsg("Please Fill All Fields");
       setErr(true);
     }
-    if (password != cpassword) {
+    else if (password != cpassword) {
       setMsg("Password and Confirm Password must be equal");
       setErr(true);
     } else {
-      // console.log(res);
+      //send signup req
+       signup.mutate({
+        name,
+        email,
+        password,
+      });
+
+      if (signup.isError) {
+        ErrorHandler(signup.error)
+      }
     }
   };
 
@@ -73,7 +78,7 @@ const SignUpSide:React.FC = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${bg})`,
+            backgroundImage: `url(${bg.src})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -93,7 +98,6 @@ const SignUpSide:React.FC = () => {
               alignItems: "center",
             }}
           >
-          
             <Typography component="h1" variant="h5">
               Sign Up
             </Typography>
@@ -165,7 +169,7 @@ const SignUpSide:React.FC = () => {
                 id="cpassword"
                 autoComplete="current-password"
               />
-              
+
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
@@ -186,7 +190,6 @@ const SignUpSide:React.FC = () => {
                   </Button>
                 </Grid>
               </Grid>
-              
             </Box>
           </Box>
         </Grid>
@@ -194,4 +197,4 @@ const SignUpSide:React.FC = () => {
     </ThemeProvider>
   );
 };
-export { SignUpSide };
+export default SignUpSide;

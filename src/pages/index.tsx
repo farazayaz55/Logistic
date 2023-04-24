@@ -9,13 +9,13 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 // import bg from "../assets/Images/bg.png";
-import bg from '../assets/Images/bg.png'
-import logo from "../assets/Images/logo.png";
-import { signInForm } from "../interfaces/index";
+import { GetServerSideProps } from "next";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { GetServerSideProps } from "next";
-
+import bg from "../assets/Images/bg.png";
+import logo from "../assets/Images/logo.png";
+import { signInForm } from "../interfaces/index";
 
 interface SignInSideProps {
   bgSrc: string;
@@ -23,8 +23,7 @@ interface SignInSideProps {
 }
 
 const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
-
-  const router=useRouter()
+  const router = useRouter();
 
   const [msg, setMsg] = useState<string>(""); // state to print message
   const [err, setErr] = useState<boolean>(false);
@@ -44,14 +43,29 @@ const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push('/seasolutions')
+    const data = new FormData(event.currentTarget);
+    const resp = await signIn("credentials", {
+      email: data.get("email"),
+      password: data.get("password"),
+      redirect: false,
+      //callback can be given here as well
+    }).then((payload) => {
+      if (payload?.status === 200) {
+        setErr(false);
+        setMsg("Login Successfully");
+        router.push('/seasolutions')
+      } else if (payload?.status === 401) {
+        setErr(true);
+        setMsg("Login failed!!");
+      }
+    });
   };
   const handleSignUp = () => {
     router.push("/signup");
   };
   const handleForgetPass = () => {
     // navigate("#");
-    router.push('#')
+    router.push("#");
   };
   return (
     <Grid
@@ -89,7 +103,6 @@ const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
           }}
         >
           <Image src={logo} alt="Logo" height={100} />
-
 
           {msg ? (
             <Box sx={{ mt: 1 }}>
@@ -138,7 +151,7 @@ const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
             />
             <Button
               fullWidth
-              onClick={handleSubmit}
+              type="submit"
               sx={{
                 marginTop: "50px",
                 textTransform: "none",
@@ -162,12 +175,11 @@ const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
   );
 };
 
+export default SignInSide;
 
-
-export default SignInSide
-
-
-export const getServerSideProps: GetServerSideProps<SignInSideProps> = async () => {
+export const getServerSideProps: GetServerSideProps<
+  SignInSideProps
+> = async () => {
   const bgSrc = "/bg.png"; // URL to the background image
   const logoSrc = "/logo.png"; // URL to the logo image
 
