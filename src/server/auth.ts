@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
       ...session,
       user: {
         ...session.user,
-        id: user.id,
+        id: user,
       },
     }),
   },
@@ -62,6 +62,8 @@ export const authOptions: NextAuthOptions = {
           };
           const user: UserDocument | null = await Users.findOne({ email });
   
+          console.log(user)
+
           if (!user) {
             console.log("NO user found")
             throw new Error('User not found');
@@ -90,6 +92,8 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  secret:process.env.JWT_SECRET,
+
 };
 
 /**

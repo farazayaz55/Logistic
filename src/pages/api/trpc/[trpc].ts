@@ -13,6 +13,7 @@ import { NextApiRequest } from 'next';
 export default trpcNext.createNextApiHandler({
   router: appRouter,
   createContext: async () => {
+    console.log("CREATE CONTEXT CALLED")
     await dbConnect()
     return {}
   },

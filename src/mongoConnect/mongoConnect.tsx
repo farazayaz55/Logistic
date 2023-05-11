@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const dbConnect = async ()=>{
+    console.log("MONGO CONNECT CALLED")
     await mongoose.connect('mongodb+srv://farazayaz:azsxdc1234@cluster0.iewyyzg.mongodb.net/Logistic?retryWrites=true&w=majority')
 }
 
