@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import {
   Container,
   Box,
@@ -32,17 +32,19 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { TbArrowNarrowDown, TbArrowNarrowUp } from "react-icons/tb";
 import Image from "next/image";
+import { api } from "@/utils/trpc";
+import MapsAutocompleteAir from "@/Components/MapsAutoCompleteAir";
 
 interface FlightData {
-    Image: JSX.Element;
-    Carrier: string;
-    Routing: string;
-    Stops: string;
-    Flight: string;
-    Departure: string;
-    Arival: string;
-    AircraftType: string;
-  }
+  Image: JSX.Element;
+  Carrier: string;
+  Routing: string;
+  Stops: string;
+  Flight: string;
+  Departure: string;
+  Arival: string;
+  AircraftType: string;
+}
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -64,19 +66,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-
-
-
 function createData(
-    Image: JSX.Element,
-    Carrier: string,
-    Routing: string,
-    Stops: string,
-    Flight: string,
-    Departure: string,
-    Arival: string,
-    AircraftType: string
-):FlightData {
+  Image: JSX.Element,
+  Carrier: string,
+  Routing: string,
+  Stops: string,
+  Flight: string,
+  Departure: string,
+  Arival: string,
+  AircraftType: string
+): FlightData {
   return {
     Image,
     Carrier,
@@ -89,106 +88,105 @@ function createData(
   };
 }
 
-const rows = [
-  createData(
-<Image
-  src="https://i.pinimg.com/originals/0e/35/61/0e35618c3b42ebf0eef8312bea410279.png"
-  alt="Flight logo"
-  width={20}
-  height={20}
-  style={{ borderRadius: "50%", marginRight: "20px" }}
-/>,
-    "PIA",
-    "unknown",
-    "Dubai",
-    "PIA",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
-  createData(
-<Image
-  src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Etihad-airways-logo.svg/1200px-Etihad-airways-logo.svg.png"
-  alt="Etihad Airways logo"
-  width={20}
-  height={20}
-  style={{ borderRadius: "50%", marginRight: "20px" }}
-/>,
-    "Itahad",
-    "unknown",
-    "Dubai",
-    "Itahad",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
-  createData(
-    <Image
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/850px-Emirates_logo.svg.png"
-      height={20}
-      width={20}
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-      alt="nn"
-    />,
-    "Emirates",
-    "unknown",
-    "Dubai",
-    "Emirates",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
+// const rows = [
+//   createData(
+//     <Image
+//       src="https://i.pinimg.com/originals/0e/35/61/0e35618c3b42ebf0eef8312bea410279.png"
+//       alt="Flight logo"
+//       width={20}
+//       height={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//     />,
+//     "PIA",
+//     "unknown",
+//     "Dubai",
+//     "PIA",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
+//   createData(
+//     <Image
+//       src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Etihad-airways-logo.svg/1200px-Etihad-airways-logo.svg.png"
+//       alt="Etihad Airways logo"
+//       width={20}
+//       height={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//     />,
+//     "Itahad",
+//     "unknown",
+//     "Dubai",
+//     "Itahad",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
+//   createData(
+//     <Image
+//       src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/850px-Emirates_logo.svg.png"
+//       height={20}
+//       width={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//       alt="nn"
+//     />,
+//     "Emirates",
+//     "unknown",
+//     "Dubai",
+//     "Emirates",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
 
-  createData(
-    <Image
-      src="https://i.pinimg.com/originals/0e/35/61/0e35618c3b42ebf0eef8312bea410279.png"
-      
-      height={20}
-      width={20}
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-      alt="nn"
-     />,
-    "PIA",
-    "unknown",
-    "Dubai",
-    "PIA",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
-  createData(
-    <Image
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Etihad-airways-logo.svg/1200px-Etihad-airways-logo.svg.png"
-      height={20}
-      width={20}
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-      alt="nn"
-     />,
-    "Itahad",
-    "unknown",
-    "Dubai",
-    "Itahad",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
-  createData(
-    <Image
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/850px-Emirates_logo.svg.png"
-      height={20}
-      width={20}
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-      alt="nn"
-     />,
-    "Emirates",
-    "unknown",
-    "Dubai",
-    "Emirates",
-    "2:00 pm",
-    "2:00 am",
-    "Unknown"
-  ),
-];
+//   createData(
+//     <Image
+//       src="https://i.pinimg.com/originals/0e/35/61/0e35618c3b42ebf0eef8312bea410279.png"
+//       height={20}
+//       width={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//       alt="nn"
+//     />,
+//     "PIA",
+//     "unknown",
+//     "Dubai",
+//     "PIA",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
+//   createData(
+//     <Image
+//       src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Etihad-airways-logo.svg/1200px-Etihad-airways-logo.svg.png"
+//       height={20}
+//       width={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//       alt="nn"
+//     />,
+//     "Itahad",
+//     "unknown",
+//     "Dubai",
+//     "Itahad",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
+//   createData(
+//     <Image
+//       src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/850px-Emirates_logo.svg.png"
+//       height={20}
+//       width={20}
+//       style={{ borderRadius: "50%", marginRight: "20px" }}
+//       alt="nn"
+//     />,
+//     "Emirates",
+//     "unknown",
+//     "Dubai",
+//     "Emirates",
+//     "2:00 pm",
+//     "2:00 am",
+//     "Unknown"
+//   ),
+// ];
 const CssTextField = styled(TextField)({
   maxHeight: "50px",
   margin: "0px 10px 0px 10px ",
@@ -224,14 +222,39 @@ const CssTextField = styled(TextField)({
     },
   },
 });
-const AirSolutions:FC = () => {
+const AirSolutions: FC = () => {
+
+  const mutateFn=api.airSolutions.getAllPossibleAirFreights.useMutation()
+
+
   const [table, setTable] = useState<boolean>(false);
   const [flight, setFlight] = useState<string>("");
-  const handleChange = (event:ChangeEvent<HTMLInputElement>) => {
+  const [accountNumber,setAccountNumber]=useState<string>("")
+  const [carrierCodes,setCarrierCodes]=useState<string>("")
+  const [originAirportCode,setOriginAirportCode]=useState<string>("")
+  const [destinationAirportCode,setDestinationAirportCode]=useState<string>("")
+  const [depatureOn,setDepartureOn]=useState<string>("")
+  const [weight,setWeight]=useState<string>("")
+
+
+
+
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFlight(event.target.value);
   };
   const handleSearch = () => {
     setTable(true);
+    mutateFn.mutate({
+      accountNumber:'12345678',
+      carrierCodes:'1234124',
+      originAirportCode:originAirportCode,
+      destinationAirportCode:destinationAirportCode,
+      departureOn:depatureOn,
+      weight: '50'
+    })
+
+
   };
   return (
     <MyProSidebarProvider>
@@ -290,52 +313,20 @@ const AirSolutions:FC = () => {
                             sx={{
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
-                              padding: "0px 10px 0px 10px",
                               marginTop: "5px",
                             }}
                           >
-                            <Input
-                              type="text"
-                              disableUnderline
-                              fullWidth
-                              placeholder="Origin Country"
-                              label="From"
-                              inputProps={{
-                                style: {
-                                  borderRadius: "10px",
-                                  margin: "10px",
-                                  padding: "10px",
-                                  backgroundColor: "#EDEDED",
-                                },
-                              }}
-                            ></Input>
-                            
+                            <MapsAutocompleteAir setCode={setOriginAirportCode}  />
                           </Box>
                           <Typography sx={{ mt: "10px" }}>To:</Typography>
                           <Box
                             sx={{
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
-                              padding: "0px 10px 0px 10px",
                               marginTop: "5px",
                             }}
                           >
-                            <Input
-                              type="text"
-                              disableUnderline
-                              fullWidth
-                              placeholder="Destination Country"
-                              label="To"
-                              inputProps={{
-                                style: {
-                                  borderRadius: "10px",
-                                  margin: "10px",
-                                  padding: "10px",
-                                  backgroundColor: "#EDEDED",
-                                },
-                              }}
-                            ></Input>
-                            
+                            <MapsAutocompleteAir setCode={setDestinationAirportCode} />
                           </Box>
                           <Typography sx={{ mt: "10px" }}>On:</Typography>
                           <Grid container spacing={2}>
@@ -348,6 +339,9 @@ const AirSolutions:FC = () => {
                                     sx={{
                                       backgroundColor: "#EDEDED",
                                       borderRadius: "10px",
+                                    }}
+                                    onChange={(newValue)=>{
+                                      setDepartureOn(newValue?.toString())
                                     }}
                                   />
                                 </LocalizationProvider>
@@ -415,69 +409,7 @@ const AirSolutions:FC = () => {
                 >
                   <Grid item sm={12} md={1} lg={1}></Grid>
                   <Grid item sm={12} md={10} lg={10}>
-                    <TableContainer
-                      component={Paper}
-                      sx={{ marginTop: "100px", marginBottom: "100px" }}
-                    >
-                      <Table
-                        sx={{ width: "100%" }}
-                        aria-label="customized table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <StyledTableCell>Carrier</StyledTableCell>
-                            <StyledTableCell align="right">
-                              Routing
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Stops
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Flight
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Departure
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Arival
-                            </StyledTableCell>
-                            <StyledTableCell align="right">
-                              Aircraft Type
-                            </StyledTableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {rows.map((row) => (
-                            <StyledTableRow key={row.Carrier}>
-                              <StyledTableCell component="th" scope="row">
-                                <Box sx={{ display: "flex" }}>
-                                  {row.Image}
-                                  {row.Carrier}
-                                </Box>
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.Routing}
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.Stops}
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.Flight}
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.Departure}
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.Arival}
-                              </StyledTableCell>
-                              <StyledTableCell align="right">
-                                {row.AircraftType}
-                              </StyledTableCell>
-                            </StyledTableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+
                   </Grid>
                   <Grid item sm={12} md={1} lg={1}></Grid>
                 </Grid>

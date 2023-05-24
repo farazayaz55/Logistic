@@ -1,32 +1,9 @@
 import UserModel from '@/Models/UserModel';
 import { z } from 'zod';
 import { publicProcedure, createTRPCRouter } from '../trpc';
-import {first_router_service} from '../services/first_router_service' 
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 export const firstRouter=createTRPCRouter({
-    hello: publicProcedure
-      .input(
-        z.object({
-          text: z.string(),
-        }),
-      )
-      .query(({ input }) => {
-        return first_router_service.hello(input)
-      }),
-  
-      bye:  publicProcedure
-      .input(
-        z.object({
-          text: z.string(),
-        }),
-      )
-      .mutation(({ input }) => {
-        return {
-          greeting: `hello ${input.text}`,
-        };
-      }),
-
       Signup:  publicProcedure
       .input(
         z.object({

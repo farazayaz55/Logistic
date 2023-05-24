@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Box,
@@ -33,14 +33,14 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { TbArrowNarrowDown, TbArrowNarrowUp } from "react-icons/tb";
 import Image from "next/image";
-import ProtectedRoute from '../client_utils/protectRoute'
+import ProtectedRoute from "../client_utils/protectRoute";
+import MapsAutocomplete from "@/Components/MapsAutoComplete";
+import { api } from "@/utils/trpc";
 
-
-interface Duration{
-    label:string,
-    value:string
+interface Duration {
+  label: string;
+  value: string;
 }
-
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -62,160 +62,72 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(
-  Image,
-  POL,
-  POD,
-  Stops,
-  TransitTime,
-  NextDeparture,
-  Service,
-  RoutingType
-) {
-  return {
-    Image,
-    POL,
-    POD,
-    Stops,
-    TransitTime,
-    NextDeparture,
-    Service,
-    RoutingType,
-  };
-}
 
-const rows = [
-  createData(
-    <Image
-  src="https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-  alt="profile picture"
-  width={20}
-  height={20}
-  style={{ borderRadius: "50%", marginRight: "20px" }}
-></Image>,
+const SeaSolutions: React.FC = () => {
+  const mutateFn = api.seaSolutionsRouter.getAllPossibleFreights.useMutation();
 
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-    "Unknown"
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-    "Unknown"
-  ),
-  createData(
-    <img
-      src={
-        "https://images.unsplash.com/photo-1680925697894-106c453c6e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-      }
-      height="20px"
-      width="20px"
-      style={{ borderRadius: "50%", marginRight: "20px" }}
-    ></img>,
-
-    "PORTBURY",
-    "HONG KONG",
-    "Dubai , India, Pakistan",
-    "30 DAYS",
-    "APRIL 20 2023",
-    "LION SERVICE",
-    "TRANSHIPMENT",
-  ),
-];
-const SeaSolutions:React.FC = () => {
   const [table, setTable] = useState<boolean>(false);
   const [combobox, setCombobox] = useState<string>("");
 
-  const handleSearch = () => {
-    setTable(true);
-  };
-  const durations:Duration[] = [
+  const durations: Duration[] = [
     { label: "1 Week", value: "1Week" },
     { label: "2 Weeks", value: "2Weeks" },
     { label: "3 Weeks", value: "3Weeks" },
     { label: "4 Weeks", value: "4Weeks" },
   ];
-  const handleComboValue = (e:React.ChangeEvent, value:string) => {
+  const handleComboValue = (e: React.ChangeEvent, value: string) => {
     console.log(value);
     setCombobox(value);
   };
+
+  const [city, setCity] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
+  const [zipCode, setZipCode] = useState<string>("");
+
+
+  const [msg,setMsg]=useState<string>("")
+
+  const [destCity, setDestCity] = useState<string>("");
+  const [destCountry, setDestCountry] = useState<string>("");
+  const [destZipCode, setDestZipCode] = useState<string>("");
+
+  const [modal, setModal] = useState<boolean>(false);
+
+  const closeModal = (): void => {
+    setModal(false);
+  };
+
+  useEffect(() => console.log(modal), [modal]);
+
+  const handleSearch = () => {
+    setTable(true);
+    console.log(city, country, zipCode, destCity, destCountry, destZipCode);
+    mutateFn.mutate(
+      {
+        source: {
+          city: city,
+          country: country,
+          zip: zipCode,
+        },
+        destination: {
+          city: destCity,
+          country: destCountry,
+          zip: destZipCode,
+        },
+      },
+      {
+        onSuccess: (data) => {
+          setModal(true);
+        },
+      }
+    );
+  };
+
   return (
     <MyProSidebarProvider>
       <div style={{ height: "100%", width: "100%" }}>
         <main>
+          
           <Box
             sx={{ margin: "20px", background: "#fff", borderRadius: "10px" }}
           >
@@ -243,15 +155,12 @@ const SeaSolutions:React.FC = () => {
                     Sea Solutions
                   </Typography>
                   <Box sx={{ display: "flex", justifyContent: "center" }}>
-
-
-<Image
-  src="https://img.freepik.com/premium-vector/cargo-logistics-truck-transportation-container-ship-with-working-crane-import-export-transport-industry_327176-212.jpg?w=740"
-  alt="cargo logistics truck transportation container ship with working crane import export transport industry"
-  width={740}
-  height={300}
-/>
-
+                    <Image
+                      src="https://img.freepik.com/premium-vector/cargo-logistics-truck-transportation-container-ship-with-working-crane-import-export-transport-industry_327176-212.jpg?w=740"
+                      alt="cargo logistics truck transportation container ship with working crane import export transport industry"
+                      width={740}
+                      height={300}
+                    />
                   </Box>
                   <Card
                     sx={{
@@ -266,32 +175,31 @@ const SeaSolutions:React.FC = () => {
                     <CardContent>
                       <Grid container spacing={2}>
                         <Grid item sm={12} md={1} lg={1}></Grid>
+                        <Grid item xs={6} sx={{display:"block"}}></Grid>
+                        <Grid item xs={6}> 
+                        <Typography sx={{ color: "#2e8548" }}>
+                {" "}
+                {msg}
+              </Typography>
+                         </Grid>
                         <Grid item sm={12} md={10} lg={10}>
                           <Typography>Origin</Typography>
                           <Box
                             sx={{
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
-                              padding: "0px 10px 0px 10px",
                               marginTop: "5px",
                             }}
                           >
-                            <Input
-                              type="text"
-                              disableUnderline
-                              fullWidth
-                              placeholder="Port or Origin Country"
-                              label="From"
-                              inputProps={{
-                                style: {
-                                  borderRadius: "10px",
-                                  margin: "10px",
-                                  padding: "10px",
-                                  backgroundColor: "#EDEDED",
-                                },
-                              }}
-                            ></Input>
-                            
+                            <MapsAutocomplete
+                              city={city}
+                              setCity={setCity}
+                              setCountry={setCountry}
+                              country={country}
+                              setZipCode={setZipCode}
+                              zipCode={zipCode}
+                              setMsg={setMsg}
+                            />
                           </Box>
                           <Typography sx={{ mt: "10px" }}>
                             Destination:
@@ -300,28 +208,20 @@ const SeaSolutions:React.FC = () => {
                             sx={{
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
-                              padding: "0px 10px 0px 10px",
                               marginTop: "5px",
                             }}
                           >
-                            <Input
-                              type="text"
-                              disableUnderline
-                              placeholder="Port or Destination Country"
-                              fullWidth
-                              label="To"
-                              inputProps={{
-                                style: {
-                                  borderRadius: "10px",
-                                  margin: "10px",
-                                  padding: "10px",
-                                  backgroundColor: "#EDEDED",
-                                },
-                              }}
-                            ></Input>
-                           
+                            <MapsAutocomplete
+                              city={destCity}
+                              setCity={setDestCity}
+                              setCountry={setDestCountry}
+                              country={destCountry}
+                              setZipCode={setDestZipCode}
+                              zipCode={destZipCode}
+                              setMsg={setMsg}
+                            />
                           </Box>
-                          <Typography sx={{ mt: "10px" }}>On:</Typography>
+                          {/* <Typography sx={{ mt: "10px" }}>On:</Typography>
                           <Grid container spacing={2}>
                             <Grid item sm={12} md={4} lg={4}>
                               <Box sx={{}}>
@@ -407,7 +307,7 @@ const SeaSolutions:React.FC = () => {
                                 </Typography>
                               </Box>
                             </Grid>
-                          </Grid>
+                          </Grid> */}
                           <Button
                             onClick={handleSearch}
                             sx={{
@@ -435,80 +335,60 @@ const SeaSolutions:React.FC = () => {
               </Grid>
 
               {table ? (
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{
-                    backgroundColor: "#fff",
-                    margin: "20px 0px 20px 20px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Grid item sm={12} md={1} lg={1}></Grid>
-                  <Grid item sm={12} md={10} lg={10}>
-                    <TableContainer
-                      component={Paper}
-                      sx={{ marginTop: "100px", marginBottom: "100px" }}
-                    >
-                      <Table
-                        sx={{ width: "100%" }}
-                        aria-label="customized table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <StyledTableCell>Port of Load</StyledTableCell>
-                            <StyledTableCell align="left">
-                              Port of Discharge
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                              Stops
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                              Transit Time
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                              Next Departure
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                              Service
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                              Routing Type
-                            </StyledTableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {rows.map((row) => (
-                            <StyledTableRow key={row.POL}>
-                              <StyledTableCell component="th" scope="row">
-                                <Box sx={{ display: "flex" }}>{row.POL}</Box>
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.POD}
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.Stops}
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.TransitTime}
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.NextDeparture}
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.Service}
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                {row.RoutingType}
-                              </StyledTableCell>
-                            </StyledTableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Grid>
-                  <Grid item sm={12} md={1} lg={1}></Grid>
-                </Grid>
+            <table className="table" style={{ width: "100%" ,marginBottom:"30px"}}>
+            {/* head */}
+            <thead>
+              <tr>
+                <th>
+                  <label>
+                    <input type="checkbox" className="checkbox" />
+                  </label>
+                </th>
+                <th>Provider </th>
+                <th>Logo</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Estimated Days </th>
+                <th>Duration Terms </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* row 1 */}
+              {mutateFn.data?.map((freight: object) => {
+                return (
+                  <>
+                    <tr>
+                      <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <td>
+                      {freight.provider}
+                      </td>
+                      <td>
+                        <div className="avatar">
+                          <div className="mask mask-squircle h-12 w-12">
+                            <Image
+                              src={freight.provider_image_75}
+                              height={20}
+                              width={20}
+                              alt="Avatar Tailwind CSS Component"
+                            />
+                          </div>
+                        </div>
+                      </td>
+
+                      <td>{freight.amount}</td>
+                      <td>{freight.currency}</td>
+                      <td>{freight.estimated_days}</td>
+                      <td>{freight.duration_terms}</td>
+                    </tr>
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
               ) : (
                 ""
               )}
