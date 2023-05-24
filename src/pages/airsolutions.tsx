@@ -223,22 +223,17 @@ const CssTextField = styled(TextField)({
   },
 });
 const AirSolutions: FC = () => {
-
-  const mutateFn=api.airSolutions.getAllPossibleAirFreights.useMutation()
-
+  const mutateFn = api.airSolutions.getAllPossibleAirFreights.useMutation();
 
   const [table, setTable] = useState<boolean>(false);
   const [flight, setFlight] = useState<string>("");
-  const [accountNumber,setAccountNumber]=useState<string>("")
-  const [carrierCodes,setCarrierCodes]=useState<string>("")
-  const [originAirportCode,setOriginAirportCode]=useState<string>("")
-  const [destinationAirportCode,setDestinationAirportCode]=useState<string>("")
-  const [depatureOn,setDepartureOn]=useState<string>("")
-  const [weight,setWeight]=useState<string>("")
-
-
-
-
+  const [accountNumber, setAccountNumber] = useState<string>("");
+  const [carrierCodes, setCarrierCodes] = useState<string>("");
+  const [originAirportCode, setOriginAirportCode] = useState<string>("");
+  const [destinationAirportCode, setDestinationAirportCode] =
+    useState<string>("");
+  const [depatureOn, setDepartureOn] = useState<string>("");
+  const [weight, setWeight] = useState<string>("");
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFlight(event.target.value);
@@ -246,15 +241,13 @@ const AirSolutions: FC = () => {
   const handleSearch = () => {
     setTable(true);
     mutateFn.mutate({
-      accountNumber:'12345678',
-      carrierCodes:'1234124',
-      originAirportCode:originAirportCode,
-      destinationAirportCode:destinationAirportCode,
-      departureOn:depatureOn,
-      weight: '50'
-    })
-
-
+      accountNumber: "12345678",
+      carrierCodes: "1234124",
+      originAirportCode: originAirportCode,
+      destinationAirportCode: destinationAirportCode,
+      departureOn: depatureOn,
+      weight: "50",
+    });
   };
   return (
     <MyProSidebarProvider>
@@ -316,7 +309,9 @@ const AirSolutions: FC = () => {
                               marginTop: "5px",
                             }}
                           >
-                            <MapsAutocompleteAir setCode={setOriginAirportCode}  />
+                            <MapsAutocompleteAir
+                              setCode={setOriginAirportCode}
+                            />
                           </Box>
                           <Typography sx={{ mt: "10px" }}>To:</Typography>
                           <Box
@@ -326,7 +321,9 @@ const AirSolutions: FC = () => {
                               marginTop: "5px",
                             }}
                           >
-                            <MapsAutocompleteAir setCode={setDestinationAirportCode} />
+                            <MapsAutocompleteAir
+                              setCode={setDestinationAirportCode}
+                            />
                           </Box>
                           <Typography sx={{ mt: "10px" }}>On:</Typography>
                           <Grid container spacing={2}>
@@ -340,8 +337,8 @@ const AirSolutions: FC = () => {
                                       backgroundColor: "#EDEDED",
                                       borderRadius: "10px",
                                     }}
-                                    onChange={(newValue)=>{
-                                      setDepartureOn(newValue?.toString())
+                                    onChange={(newValue) => {
+                                      setDepartureOn(newValue?.toString());
                                     }}
                                   />
                                 </LocalizationProvider>
@@ -398,21 +395,47 @@ const AirSolutions: FC = () => {
               </Grid>
 
               {table ? (
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{
-                    backgroundColor: "#fff",
-                    margin: "20px 0px 20px 20px",
-                    borderRadius: "15px",
-                  }}
+                <table
+                  className="table"
+                  style={{ width: "100%", marginBottom: "30px" }}
                 >
-                  <Grid item sm={12} md={1} lg={1}></Grid>
-                  <Grid item sm={12} md={10} lg={10}>
+                  {/* head */}
+                  <thead>
+                    <tr>
+                      <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <th>Airline</th>
+                      <th>Flight Number</th>
+                      <th>Departure</th>
+                      <th>Arrival </th>
+                    </tr>
+                  </thead>
 
-                  </Grid>
-                  <Grid item sm={12} md={1} lg={1}></Grid>
-                </Grid>
+                  <tbody>
+                    {
+                      mutateFn.data?.map((freight:object)=>{
+                        return(
+                          <>
+                          <tr>
+                          <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <td>{freight.airline.icaoCode}</td>
+                      <td>{freight.flight.iataNumber}</td>
+                      <td>{freight.departure.scheduledTime}</td>
+                      <td>{freight.arrival.scheduledTime}</td>
+                          </tr>
+                          </>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
               ) : (
                 ""
               )}

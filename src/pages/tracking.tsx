@@ -1,4 +1,5 @@
 import { ChangeEvent, useState } from "react";
+import { api } from "@/utils/trpc";
 import {
   Container,
   Box,
@@ -38,8 +39,16 @@ import Image from "next/image";
 
 const Tracking = () => {
   const [selectedValue, setSelectedValue] = useState("sea");
+  const [trackingNumber,setTrackingNumber]=useState()
+  const [table,setTable]=useState(false)
+  const mutateFn=api.airSolutions.getTrackingDetails.useMutation()
   const handleSeaTracking = () => {};
-  const handleAirTracking = () => {};
+  const handleAirTracking = () => {
+    setTable(true)
+    mutateFn.mutate({
+      trackingNumber:trackingNumber
+    })
+  };
   const codes = [
     {
       value: "23Za",
@@ -163,6 +172,8 @@ const Tracking = () => {
                                 label="Tracking Number"
                                 type="text"
                                 id="Trackingnumber"
+                                value={trackingNumber}
+                                onChange={(event)=>setTrackingNumber(event.target.value)}
                               />
                             </Grid>
                             <Grid item sm={12} md={4} lg={4}>
@@ -232,6 +243,57 @@ const Tracking = () => {
                   </Card>
                 </Box>
               </Grid>
+              {
+                table?(
+                  <table
+                  className="table"
+                  style={{ width: "100%", marginBottom: "30px" }}
+                >
+                  {/* head */}
+                  <thead>
+                    <tr>
+                      <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <th>Airline</th>
+                      <th>Flight Number</th>
+                      <th>Altitude</th>
+                      <th>Latitude </th>
+                      <th>Longitude</th>
+                      <th>Speed</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {
+                      mutateFn.data?.map((freight:object)=>{
+                        return(
+                          <>
+                          <tr>
+                          <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <td>{freight.airline.icaoCode}</td>
+                      <td>{freight.flight.iataNumber}</td>
+                      <td>{freight.geography.altitude}</td>
+                      <td>{freight.geography.latitude}</td>
+                      <td>{freight.geography.longitude}</td>
+                      <td>{freight.speed.horizontal}</td>
+
+
+                          </tr>
+                          </>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+                ):("")
+              }
             </Grid>
           </Container>
         </main>
