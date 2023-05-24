@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,KeyboardEvent,RefObject } from "react";
 import { usePlacesWidget } from "react-google-autocomplete";
 import { Grid, TextField, Autocomplete, Chip, Typography } from "@mui/material";
 import { google } from "google-maps";
@@ -30,7 +30,7 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
     setTimeout(()=>setMsg(""),3000)
   }
   
-  const [textValue, setTextValue] = useState<string | null >(null);
+  const [textValue, setTextValue] = useState<string | undefined | null >(null);
 
   const { ref } = usePlacesWidget({
     apiKey: "AIzaSyDXFJBn33N8ttSU29znw126DGWClXV-vkE",
@@ -68,6 +68,7 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
 
           setCity(city);
           setZipCode(zipCode);
+          if(place && place.address_components && place.formatted_address){
           for(let i=0;i<place.address_components.length;i++){
             if(place.address_components[i].short_name)
             {
@@ -75,9 +76,12 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
             }
           }
           setTextValue(place.formatted_address);
+        }
+
           setMsg("Field set")
           triggerHiddenEffect()
-          ref.current.value = "";
+          if(inputRef && inputRef.current && inputRef.current.value)
+          inputRef.current.value = "";
           break;
         } else {
           continue;
@@ -86,10 +90,14 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
     },
   });
 
+
+
+  const inputRef: RefObject<HTMLInputElement|null> = ref;
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === "Backspace") {
       console.log("backspace pressed");
-      if (textValue != null) {
+      if (textValue !== null) {
         console.log("making it null");
         setTextValue(null);
       }
@@ -104,7 +112,7 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
             fullWidth
             color="secondary"
             variant="filled"
-            inputRef={ref}
+            inputRef={inputRef}
             sx={{
               width: "100%",
 

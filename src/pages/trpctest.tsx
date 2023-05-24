@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { api } from '../utils/trpc';
 export default function IndexPage() {
 
@@ -12,7 +11,6 @@ export default function IndexPage() {
   return (
     <div>
       <p>{hello.data.greeting}</p>
-      <p>{bye.data?.greeting}</p>
     </div>
   );
 }

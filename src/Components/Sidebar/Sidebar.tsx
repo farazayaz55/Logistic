@@ -40,7 +40,7 @@ const Item = ({ title, to, icon, selected, setSelected, open, setOpen }:MenuItem
   const colors = tokens(theme.palette.mode);
   // const navigate = useNavigate();
   const router:NextRouter=useRouter()
-  const handleNavigate = (e:React.MouseEvent<HTMLLIElement,MouseEvent>) => {
+  const handleNavigate: React.MouseEventHandler<HTMLAnchorElement>  = (e) => {
     setSelected(title);
     router.push(`${to}`)
   };
@@ -126,7 +126,7 @@ const MyProSidebar = () => {
         backgroundColor={"#00254d"}
         image={sidebarImage}
       >
-        <Menu iconshape="square">
+        <Menu >
           <Box paddingLeft={"10px"} sx={{ marginTop: "20px" }}>
             <Box sx={{ color: "#fff", mb: "20px", ml: "10px" }}>
               <Typography sx={{ fontSize: "30px", fontWeight: "bold" }}>
@@ -148,7 +148,7 @@ const MyProSidebar = () => {
             <Item
               title="Sea Solution"
               to="/seasolutions"
-              icon={<GiCargoShip sixe="30px" color="#fff" />}
+              icon={<GiCargoShip size="30px" color="#fff" />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -1,8 +1,8 @@
 import UserModel from "@/Models/UserModel";
-import { z } from "zod";
-import { publicProcedure, createTRPCRouter } from "../trpc";
 import bcrypt from "bcrypt";
 import httpStatus from "http-status";
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 export const firstRouter = createTRPCRouter({
   Signup: publicProcedure
     .input(
@@ -61,6 +61,8 @@ export const firstRouter = createTRPCRouter({
       })
     )
     .query(() => {
-      return;
+      return {
+        greeting:"Ok Bye"
+      };
     }),
 });

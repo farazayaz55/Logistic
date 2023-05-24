@@ -15,7 +15,7 @@ export default trpcNext.createNextApiHandler({
   createContext: async () => {
     console.log("CREATE CONTEXT CALLED")
     await dbConnect()
-    return {}
+    return {session:null}
   },
   onError:
       ({ path, error }) => {

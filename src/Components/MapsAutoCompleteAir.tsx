@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, KeyboardEvent,RefObject} from "react";
 import { usePlacesWidget } from "react-google-autocomplete";
 import { Grid, TextField, Autocomplete, Chip, Typography } from "@mui/material";
 import { google } from "google-maps";
@@ -26,9 +26,11 @@ const MapsAutocompleteAir: React.FC<propInf> = ({setCode}) => {
           component.types.includes("locality") ||
           component.types.includes("administrative_area_level_1")
       )?.long_name;
-
-      setTextValue(place.formatted_address);
-      ref.current.value = "";
+        if(place && place.formatted_address && place.formatted_address )
+          setTextValue(place.formatted_address);
+      
+      if(inputRef && inputRef.current && inputRef.current.value)
+      inputRef.current.value = "";
 
       //find airport code against city
       const lat = place.geometry?.location.lat();
@@ -45,6 +47,8 @@ const MapsAutocompleteAir: React.FC<propInf> = ({setCode}) => {
         setCode(dataOfIata.IATA)
     },
   });
+
+  const inputRef: RefObject<HTMLInputElement|null> = ref;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === "Backspace") {
@@ -64,7 +68,7 @@ const MapsAutocompleteAir: React.FC<propInf> = ({setCode}) => {
             fullWidth
             color="secondary"
             variant="filled"
-            inputRef={ref}
+            inputRef={inputRef}
             sx={{
               width: "100%",
 

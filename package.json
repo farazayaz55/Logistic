@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "ts-lint-commit-hook": "tsc --noEmit --incremental",
-    "ts-lint": "tsc — noEmit — incremental — watch"
+    "ts-lint": "tsc --noEmit --incremental --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

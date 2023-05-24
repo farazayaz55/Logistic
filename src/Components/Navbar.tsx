@@ -38,8 +38,7 @@ import { signOut } from "next-auth/react";
      }
     return (
       <Container
-        maxWidth="100%"
-        sx={{ height: "65px", background: "#transparent" }}
+        sx={{ height: "65px", background: "#transparent",maxWidth:"100%" }}
       >
         <Grid container spacing={2}>
           <Grid item sm={6} md={4} lg={4}>
