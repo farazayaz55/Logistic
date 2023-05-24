@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 6500 ",
-    "build": "next build -p 6500",
-    "start": "next start",
+    "build": "next build ",
+    "start": "next start -p 6500",
     "lint": "next lint",
     "ts-lint-commit-hook": "tsc --noEmit --incremental",
     "ts-lint": "tsc --noEmit --incremental --watch"
