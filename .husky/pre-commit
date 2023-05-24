@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+// OLD
+# npm run test
+// NEW
+npm run ts-lint-commit-hook
