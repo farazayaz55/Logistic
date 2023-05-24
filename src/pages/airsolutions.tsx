@@ -352,8 +352,10 @@ const AirSolutions: FC = () => {
                                       backgroundColor: "#EDEDED",
                                       borderRadius: "10px",
                                     }}
-                                    onChange={(newValue:string) => {
-                                      setDepartureOn(newValue)
+                                    onChange={(newValue: string | null) => {
+                                      if (typeof newValue === "string") {
+                                        setDepartureOn(newValue);
+                                      }
                                     }}
                                   />
                                 </LocalizationProvider>

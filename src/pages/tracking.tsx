@@ -1,59 +1,57 @@
-import { ChangeEvent, useState } from "react";
-import { GetServerSideProps } from 'next';
 import { api } from "@/utils/trpc";
 import {
-  Container,
   Box,
-  Grid,
-  Typography,
+  Button,
   Card,
   CardContent,
-  TextField,
-  Button,
-  Input,
-  Checkbox,
-  RadioGroup,
+  Container,
   FormControlLabel,
+  Grid,
   Radio,
+  RadioGroup,
+  TextField,
+  Typography
 } from "@mui/material";
-import React from "react";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 
-import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
-import Navbar from "../Components/Navbar";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { TbArrowNarrowDown, TbArrowNarrowUp } from "react-icons/tb";
 import Image from "next/image";
+import Navbar from "../Components/Navbar";
+import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
+
+
+interface freightINF{
+	airline:{
+		icaoCode:string	
+	},
+	flight:{
+		iataNumber:string
+	},
+	geography:{
+		altitude:string,
+		latitude:string,
+		longitude:string
+	},
+	speed:{
+		horizontal:string
+	}
+}
 
 const Tracking = () => {
-  const [selectedValue, setSelectedValue] = useState("sea");
-  const [trackingNumber,setTrackingNumber]=useState()
-  const [table,setTable]=useState(false)
+  const [selectedValue, setSelectedValue] = useState<string>("sea");
+  const [trackingNumber, setTrackingNumber] = useState<string>("");
+  const [table, setTable] = useState<boolean>(false);
 
-
-  
-  const mutateFn=api.airSolutions.getTrackingDetails.useMutation()
+  const mutateFn = api.airSolutions.getTrackingDetails.useMutation();
   const handleSeaTracking = () => {};
   const handleAirTracking = () => {
-    setTable(true)
+    setTable(true);
     mutateFn.mutate({
-      trackingNumber:trackingNumber
-    })
+      trackingNumber,
+    });
   };
-  const codes = [
+  const codes:{ value: string; label: string }[] = [
     {
       value: "23Za",
       label: "23Za",
@@ -70,7 +68,8 @@ const Tracking = () => {
 
   const [flight, setFlight] = useState<string>("");
 
-  const handleRadio = (event:ChangeEvent<HTMLInputElement>) => {
+  const handleRadio = (event: ChangeEvent<HTMLInputElement> ) => {
+    console.log("handleRadio called")
     setSelectedValue(event.target.value);
   };
   const RADIO = styled(Radio)({
@@ -110,13 +109,12 @@ const Tracking = () => {
                     Tracking
                   </Typography>
                   <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Image
-      src="https://img.freepik.com/premium-vector/global-transportation-system-abstract-concept-vector-illustration_107173-31150.jpg?w=740"
-      alt="Global transportation system"
-      height={300}
-      width={740}
-    />
-
+                    <Image
+                      src="https://img.freepik.com/premium-vector/global-transportation-system-abstract-concept-vector-illustration_107173-31150.jpg?w=740"
+                      alt="Global transportation system"
+                      height={300}
+                      width={740}
+                    />
                   </Box>
                   <Card sx={{ width: "80%", marginLeft: "10%" }}>
                     <CardContent>
@@ -125,19 +123,18 @@ const Tracking = () => {
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
                           name="row-radio-buttons-group"
+                          onChange={handleRadio}
                         >
                           <FormControlLabel
                             value="sea"
                             control={<RADIO />}
                             label="Sea Tracking"
-                            onChange={handleRadio}
                             checked={selectedValue === "sea"}
                           />
                           <FormControlLabel
                             value="air"
                             control={<RADIO />}
                             label="Air Tracking"
-                            onChange={handleRadio}
                             checked={selectedValue === "air"}
                           />
                         </RadioGroup>
@@ -177,7 +174,9 @@ const Tracking = () => {
                                 type="text"
                                 id="Trackingnumber"
                                 value={trackingNumber}
-                                onChange={(event)=>setTrackingNumber(event.target.value)}
+                                onChange={(event) =>
+                                  setTrackingNumber(event.target.value)
+                                }
                               />
                             </Grid>
                             <Grid item sm={12} md={4} lg={4}>
@@ -207,7 +206,6 @@ const Tracking = () => {
                       {selectedValue === "sea" ? (
                         <>
                           <Grid container spacing={2}>
-                           
                             <Grid item sm={10} md={8} lg={8}>
                               <TextField
                                 margin="normal"
@@ -247,9 +245,8 @@ const Tracking = () => {
                   </Card>
                 </Box>
               </Grid>
-              {
-                table?(
-                  <table
+              {table ? (
+                <table
                   className="table"
                   style={{ width: "100%", marginBottom: "30px" }}
                 >
@@ -271,33 +268,30 @@ const Tracking = () => {
                   </thead>
 
                   <tbody>
-                    {
-                      mutateFn.data?.map((freight:object)=>{
-                        return(
-                          <>
+                    {mutateFn.data?.map((freight: freightINF) => {
+                      return (
+                        <>
                           <tr>
-                          <th>
-                        <label>
-                          <input type="checkbox" className="checkbox" />
-                        </label>
-                      </th>
-                      <td>{freight.airline.icaoCode}</td>
-                      <td>{freight.flight.iataNumber}</td>
-                      <td>{freight.geography.altitude}</td>
-                      <td>{freight.geography.latitude}</td>
-                      <td>{freight.geography.longitude}</td>
-                      <td>{freight.speed.horizontal}</td>
-
-
+                            <th>
+                              <label>
+                                <input type="checkbox" className="checkbox" />
+                              </label>
+                            </th>
+                            <td>{freight.airline.icaoCode}</td>
+                            <td>{freight.flight.iataNumber}</td>
+                            <td>{freight.geography.altitude}</td>
+                            <td>{freight.geography.latitude}</td>
+                            <td>{freight.geography.longitude}</td>
+                            <td>{freight.speed.horizontal}</td>
                           </tr>
-                          </>
-                        )
-                      })
-                    }
+                        </>
+                      );
+                    })}
                   </tbody>
                 </table>
-                ):("")
-              }
+              ) : (
+                ""
+              )}
             </Grid>
           </Container>
         </main>

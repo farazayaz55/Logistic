@@ -5,7 +5,7 @@ import {
   CardContent,
   Container,
   Grid,
-  Typography
+  Typography,
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
@@ -24,13 +24,13 @@ interface Duration {
   value: string;
 }
 
-interface freightINF{
-  provider:string,
-  provider_image_75:string,
-  amount:string,
-  currency:string,
-  estimated_days:string,
-  duration_terms:string
+interface freightINF {
+  provider: string;
+  provider_image_75: string;
+  amount: string;
+  currency: string;
+  estimated_days: string;
+  duration_terms: string;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

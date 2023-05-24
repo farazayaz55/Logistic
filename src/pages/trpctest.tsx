@@ -4,11 +4,7 @@ export default function IndexPage() {
 
 
   const hello = api.firstRouter.hello.useQuery({ text: 'client' });
-  const bye=api.firstRouter.bye.useMutation()
 
-  useEffect(()=>
-  bye.mutate({text:"Faraz"})
-  ,[])
 
   if (!hello.data) {
     return <div>Loading...</div>;
