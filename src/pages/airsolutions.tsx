@@ -46,6 +46,21 @@ interface FlightData {
   AircraftType: string;
 }
 
+interface FreightData {
+  airline: {
+    icaoCode: string;
+  };
+  flight: {
+    iataNumber: string;
+  };
+  departure: {
+    scheduledTime: string;
+  };
+  arrival: {
+    scheduledTime: string;
+  };
+}
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#00254d",
@@ -337,8 +352,8 @@ const AirSolutions: FC = () => {
                                       backgroundColor: "#EDEDED",
                                       borderRadius: "10px",
                                     }}
-                                    onChange={(newValue) => {
-                                      setDepartureOn(newValue?.toString());
+                                    onChange={(newValue:string) => {
+                                      setDepartureOn(newValue)
                                     }}
                                   />
                                 </LocalizationProvider>
@@ -416,7 +431,7 @@ const AirSolutions: FC = () => {
 
                   <tbody>
                     {
-                      mutateFn.data?.map((freight:object)=>{
+                      mutateFn.data?.map((freight:FreightData)=>{
                         return(
                           <>
                           <tr>

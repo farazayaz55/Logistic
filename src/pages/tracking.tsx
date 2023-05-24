@@ -1,4 +1,5 @@
 import { ChangeEvent, useState } from "react";
+import { GetServerSideProps } from 'next';
 import { api } from "@/utils/trpc";
 import {
   Container,
@@ -41,6 +42,9 @@ const Tracking = () => {
   const [selectedValue, setSelectedValue] = useState("sea");
   const [trackingNumber,setTrackingNumber]=useState()
   const [table,setTable]=useState(false)
+
+
+  
   const mutateFn=api.airSolutions.getTrackingDetails.useMutation()
   const handleSeaTracking = () => {};
   const handleAirTracking = () => {

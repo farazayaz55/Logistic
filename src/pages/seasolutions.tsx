@@ -1,45 +1,36 @@
-import { useEffect, useState } from "react";
 import {
-  Container,
   Box,
-  Grid,
-  Typography,
+  Button,
   Card,
   CardContent,
-  TextField,
-  Button,
-  Input,
-  Checkbox,
-  Autocomplete,
+  Container,
+  Grid,
+  Typography
 } from "@mui/material";
-import React from "react";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { styled } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
 
-import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
-import Navbar from "../Components/Navbar";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { TbArrowNarrowDown, TbArrowNarrowUp } from "react-icons/tb";
-import Image from "next/image";
-import ProtectedRoute from "../client_utils/protectRoute";
 import MapsAutocomplete from "@/Components/MapsAutoComplete";
 import { api } from "@/utils/trpc";
+import Image from "next/image";
+import Navbar from "../Components/Navbar";
+import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
+import ProtectedRoute from "../client_utils/protectRoute";
 
 interface Duration {
   label: string;
   value: string;
+}
+
+interface freightINF{
+  provider:string,
+  provider_image_75:string,
+  amount:string,
+  currency:string,
+  estimated_days:string,
+  duration_terms:string
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -62,7 +53,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-
 const SeaSolutions: React.FC = () => {
   const mutateFn = api.seaSolutionsRouter.getAllPossibleFreights.useMutation();
 
@@ -84,8 +74,7 @@ const SeaSolutions: React.FC = () => {
   const [country, setCountry] = useState<string>("");
   const [zipCode, setZipCode] = useState<string>("");
 
-
-  const [msg,setMsg]=useState<string>("")
+  const [msg, setMsg] = useState<string>("");
 
   const [destCity, setDestCity] = useState<string>("");
   const [destCountry, setDestCountry] = useState<string>("");
@@ -127,7 +116,6 @@ const SeaSolutions: React.FC = () => {
     <MyProSidebarProvider>
       <div style={{ height: "100%", width: "100%" }}>
         <main>
-          
           <Box
             sx={{ margin: "20px", background: "#fff", borderRadius: "10px" }}
           >
@@ -175,13 +163,13 @@ const SeaSolutions: React.FC = () => {
                     <CardContent>
                       <Grid container spacing={2}>
                         <Grid item sm={12} md={1} lg={1}></Grid>
-                        <Grid item xs={6} sx={{display:"block"}}></Grid>
-                        <Grid item xs={6}> 
-                        <Typography sx={{ color: "#2e8548" }}>
-                {" "}
-                {msg}
-              </Typography>
-                         </Grid>
+                        <Grid item xs={6} sx={{ display: "block" }}></Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ color: "#2e8548" }}>
+                            {" "}
+                            {msg}
+                          </Typography>
+                        </Grid>
                         <Grid item sm={12} md={10} lg={10}>
                           <Typography>Origin</Typography>
                           <Box
@@ -335,60 +323,61 @@ const SeaSolutions: React.FC = () => {
               </Grid>
 
               {table ? (
-            <table className="table" style={{ width: "100%" ,marginBottom:"30px"}}>
-            {/* head */}
-            <thead>
-              <tr>
-                <th>
-                  <label>
-                    <input type="checkbox" className="checkbox" />
-                  </label>
-                </th>
-                <th>Provider </th>
-                <th>Logo</th>
-                <th>Amount</th>
-                <th>Currency</th>
-                <th>Estimated Days </th>
-                <th>Duration Terms </th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* row 1 */}
-              {mutateFn.data?.map((freight: object) => {
-                return (
-                  <>
+                <table
+                  className="table"
+                  style={{ width: "100%", marginBottom: "30px" }}
+                >
+                  {/* head */}
+                  <thead>
                     <tr>
                       <th>
                         <label>
                           <input type="checkbox" className="checkbox" />
                         </label>
                       </th>
-                      <td>
-                      {freight.provider}
-                      </td>
-                      <td>
-                        <div className="avatar">
-                          <div className="mask mask-squircle h-12 w-12">
-                            <Image
-                              src={freight.provider_image_75}
-                              height={20}
-                              width={20}
-                              alt="Avatar Tailwind CSS Component"
-                            />
-                          </div>
-                        </div>
-                      </td>
-
-                      <td>{freight.amount}</td>
-                      <td>{freight.currency}</td>
-                      <td>{freight.estimated_days}</td>
-                      <td>{freight.duration_terms}</td>
+                      <th>Provider </th>
+                      <th>Logo</th>
+                      <th>Amount</th>
+                      <th>Currency</th>
+                      <th>Estimated Days </th>
+                      <th>Duration Terms </th>
                     </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
+                  </thead>
+                  <tbody>
+                    {/* row 1 */}
+                    {mutateFn.data?.map((freight: freightINF) => {
+                      return (
+                        <>
+                          <tr>
+                            <th>
+                              <label>
+                                <input type="checkbox" className="checkbox" />
+                              </label>
+                            </th>
+                            <td>{freight.provider}</td>
+                            <td>
+                              <div className="avatar">
+                                <div className="mask mask-squircle h-12 w-12">
+                                  <Image
+                                    src={freight.provider_image_75}
+                                    height={20}
+                                    width={20}
+                                    alt="Avatar Tailwind CSS Component"
+                                  />
+                                </div>
+                              </div>
+                            </td>
+
+                            <td>{freight.amount}</td>
+                            <td>{freight.currency}</td>
+                            <td>{freight.estimated_days}</td>
+                            <td>{freight.duration_terms}</td>
+                          </tr>
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </table>
               ) : (
                 ""
               )}

@@ -28,11 +28,8 @@ const SignInSide: React.FC<SignInSideProps> = ({ bgSrc, logoSrc }) => {
   const router = useRouter();
 
   const hello = api.firstRouter.hello.useQuery({ text: 'client' });
-  const bye=api.firstRouter.bye.useMutation()
 
-  useEffect(()=>
-  bye.mutate({text:"Faraz"})
-  ,[])
+
 
   const [msg, setMsg] = useState<string>(""); // state to print message
   const [err, setErr] = useState<boolean>(false);
