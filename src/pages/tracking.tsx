@@ -13,7 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState,useEffect } from "react";
 
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
@@ -67,6 +67,13 @@ const Tracking = () => {
   ];
 
   const [flight, setFlight] = useState<string>("");
+
+
+  useEffect(()=>{
+    if(mutateFn.data && mutateFn.data.msg){
+      alert(mutateFn.data.msg)
+    }
+  },[mutateFn])
 
   const handleRadio = (event: ChangeEvent<HTMLInputElement> ) => {
     console.log("handleRadio called")
@@ -268,7 +275,8 @@ const Tracking = () => {
                   </thead>
 
                   <tbody>
-                    {Array.isArray(mutateFn.data)  &&  mutateFn.data?.map((freight: freightINF) => {
+                    {Array.isArray(mutateFn.data)  &&  
+                    (mutateFn.data?.map((freight: freightINF) => {
                       return (
                         <>
                           <tr>
@@ -286,7 +294,8 @@ const Tracking = () => {
                           </tr>
                         </>
                       );
-                    })}
+                    }))
+                  }
                   </tbody>
                 </table>
               ) : (
