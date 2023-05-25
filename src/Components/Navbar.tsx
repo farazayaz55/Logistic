@@ -1,20 +1,17 @@
+import { ArrowDropDown } from "@mui/icons-material";
 import {
-    AppBar,
-    Box,
-    Container,
-    Grid,
-    Typography,
-    Button,
-    Menu,
-    MenuItem,
-    IconButton,
-  } from "@mui/material";
-  import React, { useState } from "react";
-  import { ArrowDropDown, SettingsOutlined } from "@mui/icons-material";
-  import logo from '../assets/Images/logoheader.png'
-import { NextRouter, useRouter } from "next/router";
-import Image from "next/image";
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem
+} from "@mui/material";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
+import { NextRouter, useRouter } from "next/router";
+import React, { useState } from "react";
+import logo from '../assets/Images/logoheader.png';
   const Navbar = () => {
     const router:NextRouter=useRouter()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,7 +26,9 @@ import { signOut } from "next-auth/react";
 
 
     const handleLogout=async()=>{
-      await signOut({ callbackUrl: 'http://localhost:3000/' })
+      console.log("HANDLELOGOUT")
+      const path=process.env.ENV=="local"?"http://localhost:6500/":"http://5.22.223.131:6500/"
+      await signOut({ callbackUrl: path })
     }
 
      const handleSetting=()=>{

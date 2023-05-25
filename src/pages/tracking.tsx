@@ -268,7 +268,7 @@ const Tracking = () => {
                   </thead>
 
                   <tbody>
-                    {mutateFn.data?.map((freight: freightINF) => {
+                    {Array.isArray(mutateFn.data)  &&  mutateFn.data?.map((freight: freightINF) => {
                       return (
                         <>
                           <tr>

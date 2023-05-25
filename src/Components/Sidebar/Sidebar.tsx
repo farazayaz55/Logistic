@@ -1,29 +1,17 @@
 
-import { useEffect, useState, useRef, MouseEvent } from "react";
-import { Menu, Sidebar, MenuItem } from "react-pro-sidebar";
-import { useProSidebar } from "react-pro-sidebar";
+import { useEffect, useRef, useState } from "react";
+import { Menu, MenuItem, Sidebar, useProSidebar } from "react-pro-sidebar";
 
 import { useSidebarContext } from "./sidebarContext";
 
 // import { Link, useNavigate } from "react-router-dom";
-import { tokens } from "./theme";
-import { useTheme, Box, Typography, IconButton } from "@mui/material";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import SwitchRightOutlinedIcon from "@mui/icons-material/SwitchRightOutlined";
-import SwitchLeftOutlinedIcon from "@mui/icons-material/SwitchLeftOutlined";
+import { Box, Typography, useTheme } from "@mui/material";
+import { NextRouter, useRouter } from "next/router";
 import { BiCurrentLocation } from "react-icons/bi";
-import { GiCargoShip } from "react-icons/gi";
 import { FiSettings } from "react-icons/fi";
+import { GiCargoShip } from "react-icons/gi";
 import { SlPlane } from "react-icons/sl";
-import { useRouter,NextRouter } from "next/router";
+import { tokens } from "./theme";
 
 interface MenuItemProps {
   title: string;
@@ -179,3 +167,4 @@ const MyProSidebar = () => {
 
 export default MyProSidebar;
 export { Item };
+
