@@ -5,13 +5,16 @@ import { Grid, TextField, Autocomplete, Chip, Typography } from "@mui/material";
 import { google } from "google-maps";
 import axios from "axios";
 
+
 interface AutoCompleteProps {
   city: string; // Assuming an array of strings representing city names
   setCity: React.Dispatch<React.SetStateAction<string>>; // Assuming the state action dispatch function for updating cities
   country: string;
   setCountry: React.Dispatch<React.SetStateAction<string>>;
-  zipCode: string;
-  setZipCode: React.Dispatch<React.SetStateAction<string>>;
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  street: string;
+  setStreet: React.Dispatch<React.SetStateAction<string>>;
   setMsg: React.Dispatch<React.SetStateAction<string>>;
 
 }
@@ -21,8 +24,7 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
   setCity,
   country,
   setCountry,
-  zipCode,
-  setZipCode,
+  state,setState,street,setStreet,
   setMsg
 }) => {
 
@@ -38,57 +40,47 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${place.geometry?.location.lat()},${place.geometry?.location.lng()}&key=AIzaSyDXFJBn33N8ttSU29znw126DGWClXV-vkE`
       );
-
       const data = await response.json();
-
+  
       const city = data.results[0]?.address_components?.find(
         (component: any) =>
           component.types.includes("locality") ||
           component.types.includes("administrative_area_level_1")
       )?.long_name;
-
-      const zipcode = await axios.get(
-        "https://api.opencagedata.com/geocode/v1/json",
-        {
-          params: {
-            q: city.toLowerCase(),
-            key: "0c6ecacdfaeb42ae92e351cbaba76549",
-          },
-        }
-      );
-
-      for (let i = 0; i < zipcode.data.results.length; i++) {
-        const firstResult = zipcode.data.results[i];
-
-        let zipCode;
-        if (firstResult.components.postcode) {
-          zipCode = firstResult.components.postcode;
-
-          console.log(`zipcode is ${zipCode} for city ${city}`);
-
-          setCity(city);
-          setZipCode(zipCode);
-          if(place && place.address_components && place.formatted_address){
-          for(let i=0;i<place.address_components.length;i++){
-            if(place.address_components[i].short_name)
-            {
-              setCountry(place.address_components[i].short_name);
-            }
+  
+      
+  
+      for (const result of data.results) {
+        for (const addressComponent of result.address_components) {
+          if (addressComponent.types.includes("administrative_area_level_1")) {
+            setState(addressComponent.long_name)
+            console.log("state is ",addressComponent.long_name)
+          } else if (addressComponent.types.includes("route")) {
+            setStreet(addressComponent.long_name)
+            console.log("street is ",addressComponent.long_name)
           }
-          setTextValue(place.formatted_address);
-        }
-
-          setMsg("Field set")
-          triggerHiddenEffect()
-          if(inputRef && inputRef.current && inputRef.current.value)
-          inputRef.current.value = "";
-          break;
-        } else {
-          continue;
         }
       }
+  
+      if (place && place.address_components && place.formatted_address) {
+        for (let i = 0; i < place.address_components.length; i++) {
+          if (place.address_components[i].short_name) {
+            setCountry(place.address_components[i].short_name);
+          }
+        }
+        setTextValue(place.formatted_address);
+      }
+  
+      setCity(city);
+
+  
+      setMsg("Field set");
+      triggerHiddenEffect();
+      if (inputRef && inputRef.current && inputRef.current.value)
+        inputRef.current.value = "";
     },
   });
+  
 
 
 
@@ -106,8 +98,8 @@ const MapsAutocomplete: React.FC<AutoCompleteProps> = ({
 
   return (
     <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <div style={{ width: "100%", marginTop: "20px"}}>
+      <Grid item xs={12} sx={{ width: "50%",height:"100%" }}>
+        <div style={{ width: "100%"}}>
           <TextField
             fullWidth
             color="secondary"

@@ -14,6 +14,9 @@ const MapsAutocompleteAir: React.FC<propInf> = ({setCode}) => {
 
   const { ref } = usePlacesWidget({
     apiKey: "AIzaSyDXFJBn33N8ttSU29znw126DGWClXV-vkE",
+    options:{
+      types:['airport']
+    },
     onPlaceSelected: async (place: google.maps.places.PlaceResult) => {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${place.geometry?.location.lat()},${place.geometry?.location.lng()}&key=AIzaSyDXFJBn33N8ttSU29znw126DGWClXV-vkE`
@@ -36,7 +39,7 @@ const MapsAutocompleteAir: React.FC<propInf> = ({setCode}) => {
       const lat = place.geometry?.location.lat();
       const lng = place.geometry?.location.lng();
       const apiUrl = `http://www.iatageo.com/getCode/${lat}/${lng}`;
-
+      console.log(lat,lng)
 
         //response of iata
 

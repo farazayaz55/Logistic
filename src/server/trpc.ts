@@ -16,12 +16,14 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
-
 import { getServerAuthSession } from "~/server/auth";
+
 
 type CreateContextOptions = {
   session: Session | null;
 };
+
+
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -67,8 +69,9 @@ export const createTRPCContext = async ({
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { OpenApiMeta } from "trpc-openapi";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<typeof createTRPCContext>().meta<OpenApiMeta>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -81,6 +84,10 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
     };
   },
 });
+
+
+
+
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)

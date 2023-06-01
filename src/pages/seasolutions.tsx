@@ -5,6 +5,7 @@ import {
   CardContent,
   Container,
   Grid,
+  TextField,
   Typography,
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -19,6 +20,7 @@ import Navbar from "../Components/Navbar";
 import { MyProSidebarProvider } from "../Components/Sidebar/sidebarContext";
 import ProtectedRoute from "../client_utils/protectRoute";
 
+
 interface Duration {
   label: string;
   value: string;
@@ -31,6 +33,10 @@ interface freightINF {
   currency: string;
   estimated_days: string;
   duration_terms: string;
+  carrier:string;
+  rate:string;
+  delivery_days:string;
+  delivery_date_guaranteed:boolean
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -80,6 +86,18 @@ const SeaSolutions: React.FC = () => {
   const [destCountry, setDestCountry] = useState<string>("");
   const [destZipCode, setDestZipCode] = useState<string>("");
 
+
+  const [srcState,setSrcState]=useState<string>("")
+  const [destState,setDestState]=useState<string>("")
+  const [srcStreet,setSrcStreet]=useState<string>("")
+  const [destStreet,setDestStreet]=useState<string>("")
+
+
+  const [length,setLength]=useState<string>("")
+  const [height,setHeight]=useState<string>("")
+  const [width,setWidth]=useState<string>("")
+  const [weight,setWeight]=useState<string>("")
+
   const [modal, setModal] = useState<boolean>(false);
 
   const closeModal = (): void => {
@@ -93,16 +111,20 @@ const SeaSolutions: React.FC = () => {
     console.log(city, country, zipCode, destCity, destCountry, destZipCode);
     mutateFn.mutate(
       {
-        source: {
-          city: city,
-          country: country,
-          zip: zipCode,
-        },
-        destination: {
-          city: destCity,
-          country: destCountry,
-          zip: destZipCode,
-        },
+          sourceCity: city,
+          sourceCountry: country,
+          sourceZip: zipCode,
+          sourceState:srcState,
+          sourceStreet:srcStreet,
+          destCity: destCity,
+          destCountry: destCountry,
+          destZip: destZipCode,
+          destState:destState,
+          destStreet:destStreet,
+          length:length,
+          width:width,
+          height:height,
+          weight:weight
       },
       {
         onSuccess: (data) => {
@@ -177,6 +199,7 @@ const SeaSolutions: React.FC = () => {
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
                               marginTop: "5px",
+                              display:"flex"
                             }}
                           >
                             <MapsAutocomplete
@@ -184,10 +207,16 @@ const SeaSolutions: React.FC = () => {
                               setCity={setCity}
                               setCountry={setCountry}
                               country={country}
-                              setZipCode={setZipCode}
-                              zipCode={zipCode}
                               setMsg={setMsg}
+                              state={srcState}
+                              setState={setSrcState}
+                              street={srcStreet}
+                              setStreet={setSrcStreet}
                             />
+
+
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"50%"}} value={zipCode} onChange={(event)=>setZipCode(event.target.value)} label={zipCode?"":`ZipCode`} ></TextField>
+
                           </Box>
                           <Typography sx={{ mt: "10px" }}>
                             Destination:
@@ -197,6 +226,7 @@ const SeaSolutions: React.FC = () => {
                               backgroundColor: "#EDEDED",
                               borderRadius: "10px",
                               marginTop: "5px",
+                              display:"flex"
                             }}
                           >
                             <MapsAutocomplete
@@ -204,98 +234,82 @@ const SeaSolutions: React.FC = () => {
                               setCity={setDestCity}
                               setCountry={setDestCountry}
                               country={destCountry}
-                              setZipCode={setDestZipCode}
-                              zipCode={destZipCode}
                               setMsg={setMsg}
+                              state={destState}
+                              setState={setDestState}
+                              street={destStreet}
+                              setStreet={setDestStreet}
                             />
-                          </Box>
-                          {/* <Typography sx={{ mt: "10px" }}>On:</Typography>
-                          <Grid container spacing={2}>
-                            <Grid item sm={12} md={4} lg={4}>
-                              <Box sx={{}}>
-                                <LocalizationProvider
-                                  dateAdapter={AdapterDayjs}
-                                >
-                                  <DatePicker
-                                    sx={{
-                                      backgroundColor: "#EDEDED",
-                                      borderRadius: "10px",
-                                    }}
-                                  />
-                                </LocalizationProvider>
-                              </Box>
-                            </Grid>
-                            <Grid item sm={12} md={4} lg={4}>
-                              <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={durations}
-                                onChange={handleComboValue}
-                                value={combobox}
-                                sx={{
-                                  "& label.Mui-focused": {
-  
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"50%"}} value={destZipCode} onChange={(event)=>setDestZipCode(event.target.value)} label={destZipCode?"":`ZipCode`} ></TextField>
 
-                                    color: "#000",
-                                  },
-                                  "& .MuiInput-underline:after": {
-                                    borderColor: "#000",
-                                    // borderColor: "#000",
-                                    borderRadius: "15px",
-                                    border: "2px solid #0000002b",
-                                  },
-                                  "& .MuiOutlinedInput-root": {
-                                    "& fieldset": {
-                                      borderColor: "#000",
-                                      borderRadius: "15px",
-                                      // border: "2px solid #0000002b",
-                                      border: "2px solid #0000002b",
-                                    },
-                                    "&:hover fieldset": {
-                                      borderColor: "#000",
-                                      borderRadius: "15px",
-                                      border: "2px solid #0000002b",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                      borderColor: "#000",
-                                      borderRadius: "15px",
-                                      border: "2px solid #0000002b",
-                                    },
-                                  },
-                                  borderRadius: "15px",
-                                  background: "#EDEDED",
-                                  width: "100%",
-                                  m: "0px 10px 10px 0px",
-                                }}
-                                renderInput={(params) => (
-                                  <TextField {...params} label="Next" />
-                                )}
-                              />
-                            </Grid>
-                            <Grid item sm={12} md={4} lg={4}>
-                              <Box
-                                sx={{
-                                  fontFamily: "Comforta",
-                                  display: "inline-flex",
-                                  justifyItems: "flex-end",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <Checkbox
-                                  name="parking"
-                                  sx={{
-                                    color: "#00254d",
-                                    "&.Mui-checked": {
-                                      color: "#00254d",
-                                    },
-                                  }}
-                                />
-                                <Typography sx={{ marginTop: "10px" }}>
-                                  Direct routing only
-                                </Typography>
-                              </Box>
-                            </Grid>
-                          </Grid> */}
+                          </Box>
+
+
+                          <Typography sx={{ mt: "10px" }}>
+                            Weight:
+                          </Typography>
+                          <Box
+                            sx={{
+                              backgroundColor: "#EDEDED",
+                              borderRadius: "10px",
+                              marginTop: "5px",
+                              display:"flex"
+                            }}
+                          >
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"100%"}} label={weight?"":`Weight of Parcel in lb`} value={weight} onChange={(event)=>setWeight(event.target.value)} >
+
+                            </TextField>
+                            </Box>
+
+                            <Typography sx={{ mt: "10px" }}>
+                            Height:
+                          </Typography>
+                          <Box
+                            sx={{
+                              backgroundColor: "#EDEDED",
+                              borderRadius: "10px",
+                              marginTop: "5px",
+                              display:"flex"
+                            }}
+                          >
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"100%"}} label={height?"":`Height of Parcel in inches`} value={height} onChange={(event)=>setHeight(event.target.value)} >
+
+                            </TextField>
+                            </Box>
+
+
+                            <Typography sx={{ mt: "10px" }}>
+                            Width:
+                          </Typography>
+                          <Box
+                            sx={{
+                              backgroundColor: "#EDEDED",
+                              borderRadius: "10px",
+                              marginTop: "5px",
+                              display:"flex"
+                            }}
+                          >
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"100%"}} label={width?"":`Width of Parcel in inches`} value={width} onChange={(event)=>setWidth(event.target.value)} >
+
+                            </TextField>
+                            </Box>
+
+                            <Typography sx={{ mt: "10px" }}>
+                            Length:
+                          </Typography>
+                          <Box
+                            sx={{
+                              backgroundColor: "#EDEDED",
+                              borderRadius: "10px",
+                              marginTop: "5px",
+                              display:"flex"
+                            }}
+                          >
+                            <TextField InputLabelProps={{ shrink: false }} sx={{width:"100%"}} label={length?"":`Length of Parcel in inches`} value={length} onChange={(event)=>setLength(event.target.value)} >
+
+                            </TextField>
+                            </Box>
+
                           <Button
                             onClick={handleSearch}
                             sx={{
@@ -354,7 +368,7 @@ const SeaSolutions: React.FC = () => {
                                 <input type="checkbox" className="checkbox" />
                               </label>
                             </th>
-                            <td>{freight.provider}</td>
+                            <td>{freight.provider ?? freight.carrier}</td>
                             <td>
                               <div className="avatar">
                                 <div className="mask mask-squircle h-12 w-12">
@@ -368,10 +382,10 @@ const SeaSolutions: React.FC = () => {
                               </div>
                             </td>
 
-                            <td>{freight.amount}</td>
-                            <td>{freight.currency}</td>
-                            <td>{freight.estimated_days}</td>
-                            <td>{freight.duration_terms}</td>
+                            <td>{freight.amount ?? freight.rate}</td>
+                            <td>{freight.currency }</td>
+                            <td>{freight.estimated_days  ?? freight.delivery_days}</td>
+                            <td>{freight.duration_terms ?? freight.delivery_date_guaranteed }</td>
                           </tr>
                         </>
                       );

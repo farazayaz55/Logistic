@@ -21,6 +21,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import dayjs from 'dayjs'
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
@@ -238,6 +241,8 @@ const CssTextField = styled(TextField)({
   },
 });
 const AirSolutions: FC = () => {
+  dayjs.extend(utc);
+dayjs.extend(timezone);
   const mutateFn = api.airSolutions.getAllPossibleAirFreights.useMutation();
 
   const [table, setTable] = useState<boolean>(false);
@@ -378,6 +383,8 @@ const AirSolutions: FC = () => {
                                       color: "#00254d",
                                     },
                                   }}
+                                  disabled
+                                  checked
                                 />
                                 <Typography sx={{ marginTop: "10px" }}>
                                   Direct routing only

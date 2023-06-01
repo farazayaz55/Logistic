@@ -44,10 +44,32 @@ const noTransitionFind = async (input: z.infer<typeof inputParamSchema>) => {
     }
     const response = await axios.get(url);
     const flights = response.data;
+    //we got all the flights departing from our source then we filter to only those which are going to our desired destination
     const filteredFlights = flights.filter(
       (flight: { arrival: { iataCode: string } }) =>
         flight.arrival.iataCode === destinationCode
     );
+
+    console.log(filteredFlights)
+
+    //then filter only those who support cargo
+
+    const cargoFlights=filteredFlights.filter(async(flight: { airline: { iataCode: string; icaoCode: string; }; })=>{
+      const url=`https://aviation-edge.com/v2/public/airlineDatabase?key=${apiKey}&codeIataAirline=${flight.airline.iataCode}`
+      const respo=await axios.get(url)
+      const dataOfRespo=respo.data
+      dataOfRespo.map((airline: { icaoCode: string; type: string })=>{
+        if(airline.icaoCode==flight.airline.icaoCode){
+          //this is the airline
+          if(airline.type.includes("cargo")){
+            return airline
+          }
+        }
+      })
+    })
+
+    return cargoFlights
+
     return filteredFlights;
   } catch (error) {
     console.log(error);
@@ -57,7 +79,6 @@ const noTransitionFind = async (input: z.infer<typeof inputParamSchema>) => {
 
 const Tracking=async(input:z.infer<typeof inputParamSchema2>)=>{
   try{
-
     const url=`https://aviation-edge.com/v2/public/flights?key=${apiKey}&flightIata=${input.trackingNumber}`
     const response = await axios.get(url);
     const details = response.data;
@@ -71,7 +92,7 @@ const Tracking=async(input:z.infer<typeof inputParamSchema2>)=>{
 
 
 export const airSolutions = createTRPCRouter({
-  getAllPossibleAirFreights: publicProcedure
+  getAllPossibleAirFreights: publicProcedure.meta({openapi:{method:'GET',path:'/getAllPossibleAirFreights'}})
     .input(inputParamSchema)
     .mutation(async ({ input }) => {
       return await noTransitionFind(input);
@@ -79,18 +100,27 @@ export const airSolutions = createTRPCRouter({
       //  return await singleTransitionFind(input)
     }),
 
-  getTrackingDetails:publicProcedure.input(inputParamSchema2).mutation(async({input})=>{
+  getTrackingDetails:publicProcedure.meta({openapi:{method:'GET',path:'/getAirTracking'}}).input(inputParamSchema2).mutation(async({input})=>{
     //first
+
     const airlineIata=input.trackingNumber.slice(0,2)
     const flightNumber=input.trackingNumber.slice(-3)
+    console.log(airlineIata,flightNumber)
     const url=`https://aviation-edge.com/v2/public/routes?key=${apiKey}&flightNumber=${flightNumber}&airlineIata=${airlineIata}`
     const response=await axios.get(url)
     const data=response.data
+    console.log(data)
     const arrivalIata=data[0].arrivalIata
 
     const url2=`https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${arrivalIata}&type=arrival&flight_num=${flightNumber}`
     const response2=await axios.get(url2)
     const data2=response2.data
+    if(!data2[0])
+    {
+      return {
+        msg:"No Data Found!"
+      }
+    }
     const deptTime=data2[0].departure.scheduledTime
     const arrTime=data2[0].arrival.scheduledTime
     const dept=dayjs(deptTime)
@@ -110,6 +140,7 @@ export const airSolutions = createTRPCRouter({
       console.log("tracking")
 
     return await Tracking(input)
+
     }
   })
 });

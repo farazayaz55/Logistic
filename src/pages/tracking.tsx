@@ -41,10 +41,18 @@ interface freightINF{
 const Tracking = () => {
   const [selectedValue, setSelectedValue] = useState<string>("sea");
   const [trackingNumber, setTrackingNumber] = useState<string>("");
+  const [seaTrackingNumber,setSeaTrackingNumber]=useState<string>("")
   const [table, setTable] = useState<boolean>(false);
+  const [seaTable,setSeaTable]=useState<boolean>(false)
 
   const mutateFn = api.airSolutions.getTrackingDetails.useMutation();
-  const handleSeaTracking = () => {};
+  const mutateFn2=api.seaSolutionsRouter.tracking.useMutation()
+  const handleSeaTracking = () => {
+    setSeaTable(true)
+    mutateFn2.mutate({
+      trackingNumber:seaTrackingNumber
+    })
+  };
   const handleAirTracking = () => {
     setTable(true);
     mutateFn.mutate({
@@ -144,34 +152,19 @@ const Tracking = () => {
                             label="Air Tracking"
                             checked={selectedValue === "air"}
                           />
+                                                    <FormControlLabel
+                            value="express"
+                            control={<RADIO />}
+                            label="Express Tracking"
+                            checked={selectedValue === "express"}
+                          />
                         </RadioGroup>
                       </Box>
                       {selectedValue === "air" ? (
                         <>
                           <Grid container spacing={2}>
-                            <Grid item sm={2} md={2} lg={2}>
-                              <TextField
-                                select
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="company"
-                                label="Company"
-                                type="company"
-                                id="company"
-                                defaultValue="33Bu"
-                              >
-                                {codes.map((option) => (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                            </Grid>
-                            <Grid item sm={10} md={6} lg={6}>
+
+                            <Grid item sm={10} md={8} lg={8}>
                               <TextField
                                 margin="normal"
                                 required
@@ -222,6 +215,8 @@ const Tracking = () => {
                                 label="B/L No Or Container No"
                                 type="text"
                                 id="billNo"
+                                value={seaTrackingNumber}
+                                onChange={(event)=>setSeaTrackingNumber(event.target.value)}
                               />
                             </Grid>
                             <Grid item sm={12} md={4} lg={4}>
@@ -248,6 +243,49 @@ const Tracking = () => {
                       ) : (
                         ""
                       )}
+
+                        {selectedValue==="express"?(
+                          <>
+                                                    <Grid container spacing={2}>
+
+<Grid item sm={10} md={8} lg={8}>
+  <TextField
+    margin="normal"
+    required
+    fullWidth
+    name="Number"
+    label="Tracking Number"
+    type="text"
+    id="Trackingnumber"
+    value={trackingNumber}
+    onChange={(event) =>
+      setTrackingNumber(event.target.value)
+    }
+  />
+</Grid>
+<Grid item sm={12} md={4} lg={4}>
+  <Button
+    onClick={handleAirTracking}
+    sx={{
+      marginTop: "15px",
+      textTransform: "none",
+      background: "#00254d",
+      color: "#fff",
+      height: "50px",
+      padding: "10px 20px 10px 20px",
+      "&:hover": {
+        background: "#00254d",
+        color: "#fff",
+      },
+    }}
+  >
+    Track
+  </Button>
+</Grid>
+</Grid>
+                          </>
+                        ):""}
+
                     </CardContent>
                   </Card>
                 </Box>
@@ -301,6 +339,62 @@ const Tracking = () => {
               ) : (
                 ""
               )}
+
+
+
+
+
+{seaTable ? (
+                <table
+                  className="table"
+                  style={{ width: "100%", marginBottom: "30px" }}
+                >
+                  {/* head */}
+                  <thead>
+                    <tr>
+                      <th>
+                        <label>
+                          <input type="checkbox" className="checkbox" />
+                        </label>
+                      </th>
+                      <th>Airline</th>
+                      <th>Flight Number</th>
+                      <th>Altitude</th>
+                      <th>Latitude </th>
+                      <th>Longitude</th>
+                      <th>Speed</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {Array.isArray(mutateFn2.data)  &&  
+                    (mutateFn2.data?.map((freight: freightINF) => {
+                      return (
+                        <>
+                          <tr>
+                            <th>
+                              <label>
+                                <input type="checkbox" className="checkbox" />
+                              </label>
+                            </th>
+                            <td>{freight.airline.icaoCode}</td>
+                            <td>{freight.flight.iataNumber}</td>
+                            <td>{freight.geography.altitude}</td>
+                            <td>{freight.geography.latitude}</td>
+                            <td>{freight.geography.longitude}</td>
+                            <td>{freight.speed.horizontal}</td>
+                          </tr>
+                        </>
+                      );
+                    }))
+                  }
+                  </tbody>
+                </table>
+              ) : (
+                ""
+              )}
+
+
             </Grid>
           </Container>
         </main>
