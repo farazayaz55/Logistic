@@ -83,7 +83,13 @@ const Tracking=async(input:z.infer<typeof inputParamSchema2>)=>{
     const response = await axios.get(url);
     const details = response.data;
     console.log(details)
+    if(!details.error)
     return details
+    else{
+      return {
+        msg:"No record Found"
+      }
+    }
   }
   catch(error){
     console.log(error)
@@ -105,42 +111,6 @@ export const airSolutions = createTRPCRouter({
 
     const airlineIata=input.trackingNumber.slice(0,2)
     const flightNumber=input.trackingNumber.slice(-3)
-    console.log(airlineIata,flightNumber)
-    const url=`https://aviation-edge.com/v2/public/routes?key=${apiKey}&flightNumber=${flightNumber}&airlineIata=${airlineIata}`
-    const response=await axios.get(url)
-    const data=response.data
-    console.log(data)
-    const arrivalIata=data[0].arrivalIata
-
-    const url2=`https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${arrivalIata}&type=arrival&flight_num=${flightNumber}`
-    const response2=await axios.get(url2)
-    const data2=response2.data
-    if(!data2[0])
-    {
-      return {
-        msg:"No Data Found!"
-      }
-    }
-    const deptTime=data2[0].departure.scheduledTime
-    const arrTime=data2[0].arrival.scheduledTime
-    const dept=dayjs(deptTime)
-    const arr=dayjs(arrTime)
-    const curr=dayjs()
-    if(curr.isBefore(dept))
-    {
-      console.log("not yet departed")
-      return {msg:"Not yet departed"}
-    }
-    else if(curr.isAfter(arr)){
-      console.log("arrived")
-
-      return {msg:"It has arrived"}
-    }
-    else{
-      console.log("tracking")
-
     return await Tracking(input)
-
-    }
   })
 });
